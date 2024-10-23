@@ -1,4 +1,4 @@
-package com.l221402.student.entity;
+package com.example.entity;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,6 @@
-package com.l221402.student.entity;
+
+package com.example.entity;
+
 
 public abstract class HangHoa {
     protected String maHang;

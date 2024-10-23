@@ -1,5 +1,10 @@
 package com.example.usecase;
 
-public interface DatabaseBoundary {
+import java.util.List;
 
+import com.example.entity.HangHoa;
+
+public interface DatabaseBoundary {
+    List<HangHoa> getAllProductList();
+    
 }
