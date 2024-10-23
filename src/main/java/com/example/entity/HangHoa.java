@@ -52,6 +52,5 @@ public abstract class HangHoa {
     public void setDonGia(double donGia) {
         this.donGia = donGia;
     }
-    
-    
+
 }

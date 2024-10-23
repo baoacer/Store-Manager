@@ -4,8 +4,10 @@ public class HangDienMay extends HangHoa {
     private int thoiGianBaoHanh; // Số tháng
     private double congSuat; // KW
 
-    public HangDienMay(double congSuat, int thoiGianBaoHanh, String maHang, 
-    String tenHang, int soLuongTon, double donGia) {
+
+    public HangDienMay(double congSuat, int thoiGianBaoHanh, String maHang, String tenHang, int soLuongTon,
+            double donGia) {
+
         super(maHang, tenHang, soLuongTon, donGia);
         this.congSuat = congSuat;
         this.thoiGianBaoHanh = thoiGianBaoHanh;
@@ -13,7 +15,7 @@ public class HangDienMay extends HangHoa {
 
     @Override
     public double tinhVat() {
-       return getDonGia() * 0.1;
+        return getDonGia() * 0.1;
     }
 
     public int getThoiGianBaoHanh() {
