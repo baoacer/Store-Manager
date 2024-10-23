@@ -1,4 +1,4 @@
-package com.l221402.student.entity;
+package com.example.entity;
 
 import java.time.LocalDate;
 
@@ -7,7 +7,7 @@ public class HangThucPham extends HangHoa {
     private LocalDate ngayHetHan;
     private String nhaCungCap;
 
-    public HangThucPham(LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap, String maHang, String tenHang, int soLuongTon, double donGia) {
+    public HangThucPham(String maHang, String tenHang, int soLuongTon, double donGia, LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap) {
         super(maHang, tenHang, soLuongTon, donGia);
         this.ngayHetHan = ngayHetHan;
         this.ngaySanXuat = ngaySanXuat;

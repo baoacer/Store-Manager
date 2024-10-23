@@ -1,10 +1,10 @@
-package com.l221402.student.entity;
+package com.example.entity;
 
 public class HangDienMay extends HangHoa {
     private int thoiGianBaoHanh; // Số tháng
     private double congSuat; // KW
 
-    public HangDienMay(double congSuat, int thoiGianBaoHanh, String maHang, String tenHang, int soLuongTon, double donGia) {
+    public HangDienMay(String maHang, String tenHang, int soLuongTon, double donGia, double congSuat, int thoiGianBaoHanh) {
         super(maHang, tenHang, soLuongTon, donGia);
         this.congSuat = congSuat;
         this.thoiGianBaoHanh = thoiGianBaoHanh;
