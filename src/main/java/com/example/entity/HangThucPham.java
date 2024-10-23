@@ -7,6 +7,7 @@ public class HangThucPham extends HangHoa {
     private LocalDate ngayHetHan;
     private String nhaCungCap;
 
+
     public HangThucPham(LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap, String maHang, String tenHang,
             int soLuongTon, double donGia) {
         super(maHang, tenHang, soLuongTon, donGia);
