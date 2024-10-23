@@ -3,10 +3,12 @@ package com.example.entity;
 import java.time.LocalDate;
 
 public class HangSanhSu extends HangHoa {
-     private String nhaSanXuat;
+    private String nhaSanXuat;
     private LocalDate ngayNhapKho;
 
-    public HangSanhSu(String maHang, String tenHang, int soLuongTon, double donGia, LocalDate ngayNhapKho, String nhaSanXuat) {
+
+    public HangSanhSu(LocalDate ngayNhapKho, String nhaSanXuat, String maHang, String tenHang, int soLuongTon,
+            double donGia) {
         super(maHang, tenHang, soLuongTon, donGia);
         this.ngayNhapKho = ngayNhapKho;
         this.nhaSanXuat = nhaSanXuat;

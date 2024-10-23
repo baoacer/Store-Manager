@@ -7,14 +7,16 @@ public class HangThucPham extends HangHoa {
     private LocalDate ngayHetHan;
     private String nhaCungCap;
 
-    public HangThucPham(String maHang, String tenHang, int soLuongTon, double donGia, LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap) {
+
+    public HangThucPham(LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap, String maHang, String tenHang,
+            int soLuongTon, double donGia) {
         super(maHang, tenHang, soLuongTon, donGia);
         this.ngayHetHan = ngayHetHan;
         this.ngaySanXuat = ngaySanXuat;
         this.nhaCungCap = nhaCungCap;
     }
 
-    public HangThucPham(){
+    public HangThucPham() {
 
     }
 
@@ -46,6 +48,5 @@ public class HangThucPham extends HangHoa {
     public void setNhaCungCap(String nhaCungCap) {
         this.nhaCungCap = nhaCungCap;
     }
-
 
 }
