@@ -1,10 +1,13 @@
 package com.example.usecase;
 
-import java.util.List;
-
 import com.example.entity.HangHoa;
 
+import java.sql.SQLException;
+
 public interface DatabaseBoundary {
-    List<HangHoa> getAllProductList();
-    
+   List<HangHoa> getAllProductList();
+    boolean saveProduct(HangHoa hangHoa) throws SQLException;
+
+    boolean removeProduct(String maHang) throws SQLException;
+
 }

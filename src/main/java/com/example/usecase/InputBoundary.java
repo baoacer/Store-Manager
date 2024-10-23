@@ -1,7 +1,6 @@
 package com.example.usecase;
 
-
 public interface InputBoundary {
-    void execute(RequestData requestData);
+    void execute(RequestData requestData) throws SQLException;
 
 }
