@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.dtos.ResponseDTO;
 import com.example.usecase.RemoveProduct.RemoveProductUseCase;
 import com.example.database.MysqlDAO;
 import com.example.dtos.RemoveDTO;
@@ -21,7 +22,8 @@ public class RemoveProductTest {
         RemoveDTO maHang = new RemoveDTO("HSS001");
         input.execute(maHang);
 
-        assertEquals("Success::Delete Product Success", presenter.getResponse().getContent() );
+        ResponseDTO response = (ResponseDTO)presenter.getResponse();
+        assertEquals("Success::Delete Product Success", response.getContent() );
     }
 
     @Test
@@ -33,7 +35,9 @@ public class RemoveProductTest {
         RemoveDTO maHang = new RemoveDTO("HSS001");
         input.execute(maHang);
 
-        assertEquals("Error::Product Not Exists", presenter.getResponse().getContent() );
+        ResponseDTO response = (ResponseDTO)presenter.getResponse();
+
+        assertEquals("Error::Product Not Exists", response.getContent() );
     }
 
     @Test
@@ -46,11 +50,9 @@ public class RemoveProductTest {
 
         input.execute(maHang);
 
-        assertEquals("Error::Invalid Product ID", presenter.getResponse().getContent() );
+        ResponseDTO response = (ResponseDTO)presenter.getResponse();
+
+        assertEquals("Error::Invalid Product ID", response.getContent() );
     }
-
-
-
-
 
 }

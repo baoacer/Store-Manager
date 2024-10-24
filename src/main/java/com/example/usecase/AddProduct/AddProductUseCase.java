@@ -35,13 +35,33 @@ public class AddProductUseCase implements InputBoundary {
 
             switch (loaiSanPham) {
                 case "Thực phẩm":
-                    hangHoa = new HangThucPham(dto.getMaHang(), dto.getTenHang(), dto.getSoLuong(), dto.getDonGia(), ((ThucPhamDTO)dto).getNgayHetHan(), ((ThucPhamDTO)dto).getNgaySanXuat(), ((ThucPhamDTO)dto).getNhaCungCap());
+                    hangHoa = new HangThucPham(
+                            dto.getMaHang(),
+                            dto.getTenHang(),
+                            dto.getSoLuong(),
+                            dto.getDonGia(),
+                            ((ThucPhamDTO) dto).getNgaySanXuat(),
+                            ((ThucPhamDTO) dto).getNgayHetHan(),
+                            ((ThucPhamDTO) dto).getNhaCungCap()
+                    );
                     break;
                 case "Điện máy":
-                    hangHoa = new HangDienMay(dto.getMaHang(), dto.getTenHang(), dto.getSoLuong(), dto.getDonGia(), ((DienMayDTO)dto).getCongSuat(), ((DienMayDTO)dto).getThoiGianBaoHanh());
+                    hangHoa = new HangDienMay(
+                            dto.getMaHang(),
+                            dto.getTenHang(),
+                            dto.getSoLuong(),
+                            dto.getDonGia(),
+                            ((DienMayDTO)dto).getCongSuat(),
+                            ((DienMayDTO)dto).getThoiGianBaoHanh());
                     break;
                 case "Sành sứ":
-                    hangHoa = new HangSanhSu(dto.getMaHang(), dto.getTenHang(), dto.getSoLuong(), dto.getDonGia(), ((SanhSuDTO)dto).getNgayNhapKho(), ((SanhSuDTO)dto).getNhaSanXuat());
+                    hangHoa = new HangSanhSu(
+                            dto.getMaHang(),
+                            dto.getTenHang(),
+                            dto.getSoLuong(),
+                            dto.getDonGia(),
+                            ((SanhSuDTO)dto).getNgayNhapKho(),
+                            ((SanhSuDTO)dto).getNhaSanXuat());
                     break;
                 default:
                     break;

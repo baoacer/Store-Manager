@@ -27,7 +27,7 @@ public class GetProductListSevenDayExpiryUseCase implements InputBoundary {
         List<ProductDTO> listProductDTO = findProduct(listHangHoa);
         GetProductListSevenDayExpiryOutputDTO getProductListSevenDayExpiryOutputDTO = new GetProductListSevenDayExpiryOutputDTO();
         getProductListSevenDayExpiryOutputDTO.setList(listProductDTO);
-        outputBoundary.exportData(getProductListSevenDayExpiryOutputDTO);
+        outputBoundary.exportResult(getProductListSevenDayExpiryOutputDTO);
     }
 
     private List<ProductDTO> findProduct(List<HangHoa> listProduct) {

@@ -35,7 +35,7 @@ public class GetProductListUseCase implements InputBoundary {
         }
         GetProductListOutputDTO getProductListOutputDTO = new GetProductListOutputDTO();
         getProductListOutputDTO.setList(listProductDTO);
-        outputBoundary.exportData(getProductListOutputDTO);
+        outputBoundary.exportResult(getProductListOutputDTO);
     }
 
 }

@@ -4,24 +4,14 @@ import com.example.usecase.ResponseData;
 import com.example.usecase.OutputBoundary;
 
 public class Presenter implements OutputBoundary{
-    private ResponseDTO response = null;
-    private ResponseData list = null; 
+    private ResponseData response = null;
 
     @Override
     public void exportResult(ResponseData responseData) {
-        this.response = (ResponseDTO) responseData;
-    }
-  
-    @Override
-    public void exportData(ResponseData responseData) {
-        this.list = responseData;
+        this.response = responseData;
     }
 
-    public ResponseDTO getResponse() {
+    public ResponseData getResponse() {
         return response;
-    }
-  
-   public ResponseData getList() {
-        return list;
     }
 }

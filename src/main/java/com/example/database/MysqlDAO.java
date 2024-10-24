@@ -2,6 +2,8 @@ package com.example.database;
 
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.entity.HangDienMay;
@@ -11,30 +13,13 @@ import com.example.entity.HangThucPham;
 import com.example.usecase.DatabaseBoundary;
 
 public class MysqlDAO implements DatabaseBoundary {
-    private static final String URL = "jdbc:mysql://localhost:3306/products_shop";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-    private static Connection connection = null;
-
-    public static Connection getConnection() throws SQLException {
-        if (connection == null) {
-
-            try {
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            } catch (SQLException e) {
-                throw new SQLException("Error connecting to database", e);
-            }
-        }
-        return connection;
-    }
-
 
     public MysqlDAO() {
     }
 
     @Override
     public boolean saveProduct(HangHoa hangHoa) throws SQLException {
-        try (Connection conn = getConnection()) {
+        try (Connection conn = MysqlConnection.getConnection()) {
             conn.setAutoCommit(false); // Bắt đầu giao dịch
 
             // Bước 1: Lưu vào bảng hanghoa
@@ -95,7 +80,7 @@ public class MysqlDAO implements DatabaseBoundary {
 
     @Override
     public boolean removeProduct(String maHang) throws SQLException {
-        try (Connection conn = getConnection()) {
+        try (Connection conn = MysqlConnection.getConnection()) {
             conn.setAutoCommit(false); // Bắt đầu giao dịch
 
             String sqlDeleteLoaiHang = null;
@@ -165,12 +150,12 @@ public class MysqlDAO implements DatabaseBoundary {
             try (ResultSet resultSet1 = statement.executeQuery(sqlQueryHangDienMay)) {
                 while (resultSet1.next()) {
                     HangHoa hangHoa = new HangDienMay(
-                            resultSet1.getDouble("congSuat"),
-                            resultSet1.getInt("thoiGianBaoHanh"),
                             resultSet1.getString("maHang"),
                             resultSet1.getString("tenHang"),
                             resultSet1.getInt("soLuongTon"),
-                            resultSet1.getDouble("donGia"));
+                            resultSet1.getDouble("donGia"),
+                            resultSet1.getDouble("congSuat"),
+                            resultSet1.getInt("thoiGianBaoHanh"));
                     productDB.add(hangHoa);
                 }
             }
@@ -180,12 +165,12 @@ public class MysqlDAO implements DatabaseBoundary {
                 while (resultSet2.next()) {
                     LocalDate ngayNhapKho = resultSet2.getDate("ngayNhapKho").toLocalDate();
                     HangHoa hangHoa = new HangSanhSu(
-                            ngayNhapKho,
-                            resultSet2.getString("nhaSanXuat"),
-                            resultSet2.getString("maHang"),
                             resultSet2.getString("tenHang"),
+                            resultSet2.getString("maHang"),
                             resultSet2.getInt("soLuongTon"),
-                            resultSet2.getDouble("donGia"));
+                            resultSet2.getDouble("donGia"),
+                            ngayNhapKho,
+                            resultSet2.getString("nhaSanXuat"));
                     productDB.add(hangHoa);
                 }
             }
@@ -196,13 +181,13 @@ public class MysqlDAO implements DatabaseBoundary {
                     LocalDate ngaySanXuat = resultSet3.getDate("ngaySanXuat").toLocalDate();
                     LocalDate ngayHetHan = resultSet3.getDate("ngayHetHan").toLocalDate();
                     HangHoa hangHoa = new HangThucPham(
-                            ngayHetHan,
-                            ngaySanXuat,
-                            resultSet3.getString("nhaCungCap"),
                             resultSet3.getString("maHang"),
                             resultSet3.getString("tenHang"),
                             resultSet3.getInt("soLuongTon"),
-                            resultSet3.getDouble("donGia"));
+                            resultSet3.getDouble("donGia"),
+                            ngaySanXuat,
+                            ngayHetHan,
+                            resultSet3.getString("nhaCungCap"));
                     productDB.add(hangHoa);
                 }
             }

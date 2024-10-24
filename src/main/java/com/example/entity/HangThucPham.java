@@ -9,9 +9,11 @@ public class HangThucPham extends HangHoa {
 
 
 
-    public HangThucPham(LocalDate ngayHetHan, LocalDate ngaySanXuat, String nhaCungCap, String maHang, String tenHang,
-
-            int soLuongTon, double donGia) {
+    public HangThucPham(String maHang, String tenHang,
+                        int soLuongTon, double donGia,
+                        LocalDate ngaySanXuat,
+                        LocalDate ngayHetHan,
+                        String nhaCungCap) {
         super(maHang, tenHang, soLuongTon, donGia);
         this.ngayHetHan = ngayHetHan;
         this.ngaySanXuat = ngaySanXuat;

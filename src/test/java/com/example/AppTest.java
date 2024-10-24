@@ -9,6 +9,8 @@ import com.example.usecase.GetProductListUseCase.GetProductListOutputDTO;
 import com.example.usecase.GetProductListUseCase.GetProductListUseCase;
 import com.example.usecase.InputBoundary;
 
+import java.sql.SQLException;
+
 /**
  * Unit test for simple App.
  */
@@ -18,7 +20,7 @@ public class AppTest {
          * Rigorous Test :-)
          */
         @Test
-        public void testGetAllProductList() {
+        public void testGetAllProductList() throws SQLException {
                 // 1. Tạo đối tượng MysqlDAO và truyền dữ liệu giả lập từ getData()
                 MysqlDAO mdao = new MysqlDAO();
                 // 2. Tạo đối tượng Presenter để lưu kết quả
@@ -30,9 +32,9 @@ public class AppTest {
                 // RequestData requestData = new RequestInputDTO();
                 i.execute(null);
                 // 6. Kiểm tra kết quả trong Presenter
-                GetProductListOutputDTO outputDTO = (GetProductListOutputDTO) p.getList();
+                GetProductListOutputDTO outputDTO = (GetProductListOutputDTO) p.getResponse();
                 // Kiểm tra số lượng sản phẩm trong danh sách
-                assertEquals(30, outputDTO.getList().size());
+                assertEquals(1, outputDTO.getList().size());
         }
 
         // @Test

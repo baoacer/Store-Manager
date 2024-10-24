@@ -3,6 +3,7 @@ package com.example;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import com.example.dtos.ResponseDTO;
 import com.example.usecase.AddProduct.AddProductUseCase;
 import com.example.dtos.HangHoaDTO;
 import com.example.dtos.SanhSuDTO;
@@ -32,8 +33,9 @@ public class AddProductTest {
                 LocalDate.parse("2024-10-25"));
 
         addUseCase.execute(hangHoaDTO);
+        ResponseDTO response = (ResponseDTO)presenter.getResponse();
 
-        assertEquals("Success::Thêm sản phẩm thành công", presenter.getResponse().getContent());
+        assertEquals("Success::Thêm sản phẩm thành công", response.getContent()  );
     }
 
      @Test
@@ -52,9 +54,9 @@ public class AddProductTest {
                  "Sanh Hoa Sen",
                  LocalDate.parse("2024-10-25"));
          addUseCase.execute(hangHoaDTO);
+         ResponseDTO response = (ResponseDTO)presenter.getResponse();
 
-
-        assertEquals("Error::Kiểm tra lại dữ liệu", presenter.getResponse().getContent());
+        assertEquals("Error::Kiểm tra lại dữ liệu", response.getContent());
     }
 
 
