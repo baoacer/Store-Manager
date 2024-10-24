@@ -6,6 +6,7 @@ D:\CODE\university\test\store-manager\src\main\java\com\example\usecase\Response
 D:\CODE\university\test\store-manager\src\main\java\com\example\App.java
 D:\CODE\university\test\store-manager\src\main\java\com\example\database\MysqlDAO.java
 D:\CODE\university\test\store-manager\src\main\java\com\example\usecase\DatabaseBoundary.java
+D:\CODE\university\test\store-manager\src\main\java\com\example\usecase\impl\HangDienMayRequest.java
 D:\CODE\university\test\store-manager\src\main\java\com\example\usecase\OutputBoundary.java
 D:\CODE\university\test\store-manager\src\main\java\com\example\usecase\UseCase.java
 D:\CODE\university\test\store-manager\src\main\java\com\example\entity\HangThucPham.java

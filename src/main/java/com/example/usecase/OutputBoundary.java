@@ -1,5 +1,7 @@
 package com.example.usecase;
 
-public interface OutputBoundary {
+import com.example.usecase.ResponseData;
 
+public interface OutputBoundary {
+    void exportResult(ResponseData responseData);
 }

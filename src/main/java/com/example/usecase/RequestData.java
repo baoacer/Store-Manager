@@ -1,4 +1,4 @@
 package com.example.usecase;
-public interface RequestData {
 
+public interface RequestData {
 }

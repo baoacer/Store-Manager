@@ -170,10 +170,11 @@ public class MySqlDAO implements DatabaseBoundary {
         String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
 
         try {
-
+            // Start transaction
             Connection connection = MysqlConnection.getConnection();
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Disable auto-commit for transaction
 
+            // Update hangsangsu
             try (PreparedStatement preparedStatementHangSanhSu = connection.prepareStatement(queryHangSanhSu)) {
                 SanhSuDTO hangSanhSu = (SanhSuDTO) requestData;
 
@@ -184,7 +185,7 @@ public class MySqlDAO implements DatabaseBoundary {
                 preparedStatementHangSanhSu.executeUpdate();
             }
 
-
+            // Update hanghoa
             try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
                 SanhSuDTO hangSanhSu = (SanhSuDTO) requestData;
 
@@ -196,10 +197,11 @@ public class MySqlDAO implements DatabaseBoundary {
                 preparedStatementHangHoa.executeUpdate();
             }
 
-            connection.commit();
+            connection.commit(); // Commit the transaction
             return "Sanh Su cap nhat thanh cong!";
 
         } catch (SQLException e) {
+            // Rollback transaction if any error occurs
             try (Connection connection = MysqlConnection.getConnection()) {
                 connection.rollback();
             } catch (SQLException rollbackException) {

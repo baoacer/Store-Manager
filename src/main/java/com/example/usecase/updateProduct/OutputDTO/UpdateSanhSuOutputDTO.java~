@@ -1,0 +1,7 @@
+package com.example.usecase.updateProduct.OutputDTO;
+
+public class UpdateSanhSuOutputDTO extends BaseOutputDTO{
+    public UpdateSanhSuOutputDTO(String message) {
+        super(message);
+    }
+}

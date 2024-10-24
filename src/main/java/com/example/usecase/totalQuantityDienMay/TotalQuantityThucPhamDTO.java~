@@ -1,0 +1,11 @@
+package com.example.usecase.totalQuantityDienMay;
+
+import com.example.usecase.ResponseData;
+
+public class TotalQuantityThucPhamDTO extends BaseTotalQuantityDTO implements ResponseData {
+
+    public TotalQuantityThucPhamDTO(int totalQuantityDienMay) {
+        super(totalQuantityDienMay);
+    }
+
+}
