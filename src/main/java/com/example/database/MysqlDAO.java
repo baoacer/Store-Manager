@@ -6,15 +6,93 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import com.example.entity.HangDienMay;
 import com.example.entity.HangHoa;
 import com.example.entity.HangSanhSu;
 import com.example.entity.HangThucPham;
 import com.example.usecase.DatabaseBoundary;
+import com.example.usecase.RequestData;
 
 public class MysqlDAO implements DatabaseBoundary {
 
     public MysqlDAO() {
+    }
+
+    @Override
+    public List<HangHoa> getAllProductList() {
+        List<HangHoa> productDB = new ArrayList<>();
+
+        String sqlQueryHangDienMay = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, d.thoiGianBaoHanh, d.congSuat " +
+                "FROM hanghoa h INNER JOIN hangdienmay d ON h.maHang = d.maHang";
+
+        String sqlQueryHangSanhsu = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, s.nhaSanXuat, s.ngayNhapKho " +
+                "FROM hanghoa h INNER JOIN hangsanhsu s ON h.maHang = s.maHang";
+
+        String sqlQueryHangThucPham = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, t.ngaySanXuat, t.ngayHetHan, t.nhaCungCap " +
+                "FROM hanghoa h INNER JOIN hangthucpham t ON h.maHang = t.maHang";
+
+        try (Connection connection = MysqlConnection.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            // Lấy hàng điện máy
+            try (ResultSet resultSet1 = statement.executeQuery(sqlQueryHangDienMay)) {
+                while (resultSet1.next()) {
+                    HangHoa hangHoa = new HangDienMay(
+                            resultSet1.getString("maHang"),
+                            resultSet1.getString("tenHang"),
+                            resultSet1.getInt("soLuongTon"),
+                            resultSet1.getDouble("donGia"),
+                            resultSet1.getDouble("congSuat"),
+                            resultSet1.getInt("thoiGianBaoHanh")
+                    );
+                    productDB.add(hangHoa);
+                }
+            }
+
+            // Lấy hàng sành sứ
+            try (ResultSet resultSet2 = statement.executeQuery(sqlQueryHangSanhsu)) {
+                while (resultSet2.next()) {
+                    LocalDate ngayNhapKho = resultSet2.getDate("ngayNhapKho") != null ?
+                            resultSet2.getDate("ngayNhapKho").toLocalDate() : null;
+                    HangHoa hangHoa = new HangSanhSu(
+                            resultSet2.getString("maHang"),
+                            resultSet2.getString("tenHang"),
+                            resultSet2.getInt("soLuongTon"),
+                            resultSet2.getDouble("donGia"),
+                            ngayNhapKho,
+                            resultSet2.getString("nhaSanXuat")
+                    );
+                    productDB.add(hangHoa);
+                }
+            }
+
+            // Lấy hàng thực phẩm
+            try (ResultSet resultSet3 = statement.executeQuery(sqlQueryHangThucPham)) {
+                while (resultSet3.next()) {
+                    LocalDate ngaySanXuat = resultSet3.getDate("ngaySanXuat") != null ?
+                            resultSet3.getDate("ngaySanXuat").toLocalDate() : null;
+                    LocalDate ngayHetHan = resultSet3.getDate("ngayHetHan") != null ?
+                            resultSet3.getDate("ngayHetHan").toLocalDate() : null;
+                    HangHoa hangHoa = new HangThucPham(
+                            resultSet3.getString("maHang"),
+                            resultSet3.getString("tenHang"),
+                            resultSet3.getInt("soLuongTon"),
+                            resultSet3.getDouble("donGia"),
+                            ngayHetHan,
+                            ngaySanXuat,
+                            resultSet3.getString("nhaCungCap")
+                    );
+                    productDB.add(hangHoa);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return productDB;
     }
 
     @Override
@@ -123,78 +201,198 @@ public class MysqlDAO implements DatabaseBoundary {
     }
 
 
+
+
     @Override
-    public List<HangHoa> getAllProductList() {
-        return getProductListFromDatabase();
+    public int getTotalQuantityDienMay() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangdienmay hdm ON hh.maHang = hdm.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong dien may");
     }
 
-    private List<HangHoa> getProductListFromDatabase() {
-        List<HangHoa> productDB = new ArrayList<>();
-        String sqlQueryHangDienMay = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, d.thoiGianBaoHanh, d.congSuat "
-                +
-                "FROM hanghoa h " +
-                "INNER JOIN hangdienmay d ON h.maHang = d.maHang";
-        ;
-        String sqlQueryHangSanhsu = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, s.nhaSanXuat, s.ngayNhapKho " +
-                "FROM hanghoa h " +
-                "INNER JOIN hangsanhsu s ON h.maHang = s.maHang";
-        String sqlQueryHangThucPham = "SELECT h.maHang, h.tenHang, h.soLuongTon, h.donGia, t.ngaySanXuat, t.ngayHetHan, t.nhaCungCap "
-                +
-                "FROM hanghoa h " +
-                "INNER JOIN hangthucpham t ON h.maHang = t.maHang";
 
-        try (Connection connection = MysqlConnection.getConnection();
-                Statement statement = connection.createStatement()) {
+    @Override
+    public int getTotalQuantitySanhSu() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangsanhsu hss ON hh.maHang = hss.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong sanh su");
+    }
 
-            // Lấy hàng điện máy
-            try (ResultSet resultSet1 = statement.executeQuery(sqlQueryHangDienMay)) {
-                while (resultSet1.next()) {
-                    HangHoa hangHoa = new HangDienMay(
-                            resultSet1.getString("maHang"),
-                            resultSet1.getString("tenHang"),
-                            resultSet1.getInt("soLuongTon"),
-                            resultSet1.getDouble("donGia"),
-                            resultSet1.getDouble("congSuat"),
-                            resultSet1.getInt("thoiGianBaoHanh"));
-                    productDB.add(hangHoa);
-                }
+
+    @Override
+    public int getTotalQuantityThucPham() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangthucpham htp ON hh.maHang = htp.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong thuc pham");
+    }
+
+
+    private int getTotalQuantity(String query, String errorMessage) throws SQLException {
+        Connection connection = MysqlConnection.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        int totalQuantity = 0;
+
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                totalQuantity = resultSet.getInt(1);
             }
-
-            // Lấy hàng sành sứ
-            try (ResultSet resultSet2 = statement.executeQuery(sqlQueryHangSanhsu)) {
-                while (resultSet2.next()) {
-                    LocalDate ngayNhapKho = resultSet2.getDate("ngayNhapKho").toLocalDate();
-                    HangHoa hangHoa = new HangSanhSu(
-                            resultSet2.getString("tenHang"),
-                            resultSet2.getString("maHang"),
-                            resultSet2.getInt("soLuongTon"),
-                            resultSet2.getDouble("donGia"),
-                            ngayNhapKho,
-                            resultSet2.getString("nhaSanXuat"));
-                    productDB.add(hangHoa);
-                }
-            }
-
-            // Lấy hàng thực phẩm
-            try (ResultSet resultSet3 = statement.executeQuery(sqlQueryHangThucPham)) {
-                while (resultSet3.next()) {
-                    LocalDate ngaySanXuat = resultSet3.getDate("ngaySanXuat").toLocalDate();
-                    LocalDate ngayHetHan = resultSet3.getDate("ngayHetHan").toLocalDate();
-                    HangHoa hangHoa = new HangThucPham(
-                            resultSet3.getString("maHang"),
-                            resultSet3.getString("tenHang"),
-                            resultSet3.getInt("soLuongTon"),
-                            resultSet3.getDouble("donGia"),
-                            ngaySanXuat,
-                            ngayHetHan,
-                            resultSet3.getString("nhaCungCap"));
-                    productDB.add(hangHoa);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println(errorMessage + ": " + e.getMessage());
+        } finally {
+            if (resultSet != null)
+                resultSet.close();
+            if (statement != null)
+                statement.close();
         }
-        return productDB; // Trả danh sách đối tượng HangHoa
+
+        return totalQuantity;
+    }
+
+
+    @Override
+    public String updateProductDienMay(HangDienMay hangDienMay) throws SQLException {
+        String queryHangDienMay = "UPDATE hangdienmay SET thoiGianBaoHanh = ?, congSuat = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+            // Start transaction
+            Connection connection = MysqlConnection.getConnection();
+
+
+            // Update hangdienmay
+            try (PreparedStatement preparedStatementHangDienMay = connection.prepareStatement(queryHangDienMay)) {
+
+
+                preparedStatementHangDienMay.setInt(1, hangDienMay.getThoiGianBaoHanh());
+                preparedStatementHangDienMay.setDouble(2, hangDienMay.getCongSuat());
+                preparedStatementHangDienMay.setString(3, hangDienMay.getMaHang());
+
+                preparedStatementHangDienMay.executeUpdate();
+            }
+
+            // Update hanghoa
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+
+                preparedStatementHangHoa.setString(1, hangDienMay.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangDienMay.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangDienMay.getDonGia());
+                preparedStatementHangHoa.setString(4, hangDienMay.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+            return "Dien may cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+            return "Lỗi khi cập nhật điện máy";
+        }
+    }
+
+
+
+    @Override
+    public String updateProductThucPham(HangThucPham hangThucPham) throws SQLException {
+        String queryHangThucPham = "UPDATE hangthucpham SET ngaySanXuat = ?, ngayHetHan = ?, nhaCungCap = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+            Connection connection = MysqlConnection.getConnection();
+
+
+            try (PreparedStatement preparedStatementHangThucPham = connection.prepareStatement(queryHangThucPham)) {
+
+
+                preparedStatementHangThucPham.setDate(1, java.sql.Date.valueOf(hangThucPham.getNgaySanXuat()));
+                preparedStatementHangThucPham.setDate(2, java.sql.Date.valueOf(hangThucPham.getNgayHetHan()));
+                preparedStatementHangThucPham.setString(3, hangThucPham.getNhaCungCap());
+                preparedStatementHangThucPham.setString(4, hangThucPham.getMaHang());
+
+                preparedStatementHangThucPham.executeUpdate();
+            }
+
+
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+
+
+                preparedStatementHangHoa.setString(1, hangThucPham.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangThucPham.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangThucPham.getDonGia());
+                preparedStatementHangHoa.setString(4, hangThucPham.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+            return "Thuc Pham cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+           return "Lỗi cập nhật dữ liệu thực phẩm";
+        }
+    }
+
+
+
+
+    @Override
+    public String updateProductSanhSu(HangSanhSu hangSanhSu) throws SQLException {
+        String queryHangSanhSu = "UPDATE hangsangsu SET nhaSanXuat = ?, ngayNhapKho = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+
+            Connection connection = MysqlConnection.getConnection();
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement preparedStatementHangSanhSu = connection.prepareStatement(queryHangSanhSu)) {
+
+
+                preparedStatementHangSanhSu.setString(1, hangSanhSu.getNhaSanXuat());
+                preparedStatementHangSanhSu.setDate(2, java.sql.Date.valueOf(hangSanhSu.getNgayNhapKho()));
+                preparedStatementHangSanhSu.setString(3, hangSanhSu.getMaHang());
+
+                preparedStatementHangSanhSu.executeUpdate();
+            }
+
+
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+
+                preparedStatementHangHoa.setString(1, hangSanhSu.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangSanhSu.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangSanhSu.getDonGia());
+                preparedStatementHangHoa.setString(4, hangSanhSu.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+            connection.commit();
+            return "Sanh Su cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+            return "Lỗi cập nhật dữ liệu sành sứ";
+        }
     }
 }

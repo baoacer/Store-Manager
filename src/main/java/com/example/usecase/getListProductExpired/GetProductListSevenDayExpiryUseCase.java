@@ -1,10 +1,12 @@
-package com.example.usecase.GetProductListSevenDaysExpiryUseCase;
+package com.example.usecase.getListProductExpired;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.dtos.ProductDTO;
+import com.example.dtos.getProductListDTOs.HangHoaOutputDTO;
+import com.example.dtos.getProductListDTOs.HangThucPhamOutputDTO;
 import com.example.entity.HangHoa;
 import com.example.entity.HangThucPham;
 import com.example.usecase.DatabaseBoundary;
@@ -22,17 +24,18 @@ public class GetProductListSevenDayExpiryUseCase implements InputBoundary {
     }
 
     @Override
-    public void execute(RequestData requestData) {
+    public void execute(RequestData requestData) throws SQLException {
         List<HangHoa> listHangHoa = databaseBoundary.getAllProductList();
-        List<ProductDTO> listProductDTO = findProduct(listHangHoa);
+        List<HangHoaOutputDTO> listProductDTO = findProduct(listHangHoa);
         GetProductListSevenDayExpiryOutputDTO getProductListSevenDayExpiryOutputDTO = new GetProductListSevenDayExpiryOutputDTO();
         getProductListSevenDayExpiryOutputDTO.setList(listProductDTO);
         outputBoundary.exportResult(getProductListSevenDayExpiryOutputDTO);
     }
 
-    private List<ProductDTO> findProduct(List<HangHoa> listProduct) {
+    private List<HangHoaOutputDTO> findProduct(List<HangHoa> listProduct) {
+
         LocalDate dateNow = LocalDate.now();
-        List<ProductDTO> list = new ArrayList<>();
+        List<HangHoaOutputDTO> list = new ArrayList<>();
 
         for (HangHoa hangHoa : listProduct) {
             // Chỉ xử lý các sản phẩm thuộc lớp HangThucPham
@@ -44,9 +47,10 @@ public class GetProductListSevenDayExpiryUseCase implements InputBoundary {
 
                 // Kiểm tra nếu ngày hết hạn trong khoảng từ 1 đến 7 ngày
                 if (daysUntilExpiry >= 0 && daysUntilExpiry <= 7) {
-                    ProductDTO productSevenDaysExpiry = new ProductDTO(thucPham.getMaHang(),
-                            thucPham.getTenHang(), thucPham.getSoLuongTon(), thucPham.getDonGia(), thucPham.tinhVat());
-                    list.add(productSevenDaysExpiry);
+                    HangHoaOutputDTO hangHoaOutputDTO = new HangThucPhamOutputDTO(thucPham.getMaHang(),
+                            thucPham.getTenHang(), thucPham.getSoLuongTon(), thucPham.getDonGia(), thucPham.tinhVat(),
+                            thucPham.getNgaySanXuat(), thucPham.getNgayHetHan(), thucPham.getNhaCungCap());
+                    list.add(hangHoaOutputDTO);
                 }
             }
         }

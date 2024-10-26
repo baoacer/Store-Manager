@@ -1,8 +1,8 @@
-package com.example.usecase.RemoveProduct;
+package com.example.usecase.removeProduct;
 
 import com.example.usecase.InputBoundary;
 import com.example.usecase.RequestData;
-import com.example.dtos.RemoveDTO;
+import com.example.dtos.removeProductDTOs.RemoveDTO;
 import com.example.dtos.ResponseDTO;
 import com.example.usecase.DatabaseBoundary;
 import com.example.usecase.OutputBoundary;
@@ -33,6 +33,7 @@ public class RemoveProductUseCase implements InputBoundary {
             removeResponse.setContent("Error::Invalid Product ID");
         }
         outputBoundary.exportResult(removeResponse);
+//        outputBoundary.removeProductPresenter(removeResponse);
     }
 
     public boolean validate(String maHang){

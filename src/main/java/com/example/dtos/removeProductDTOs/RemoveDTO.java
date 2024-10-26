@@ -1,4 +1,4 @@
-package com.example.dtos;
+package com.example.dtos.removeProductDTOs;
 
 import com.example.usecase.RequestData;
 

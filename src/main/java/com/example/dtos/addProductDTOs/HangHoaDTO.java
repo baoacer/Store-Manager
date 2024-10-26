@@ -1,19 +1,23 @@
-package com.example.dtos;
+package com.example.dtos.addProductDTOs;
 
-public class ProductDTO {
+import com.example.usecase.RequestData;
+
+public class HangHoaDTO implements RequestData {
+
+    // Chung
     protected String maHang;
     protected String tenHang;
-    protected int soLuongTon;
+    protected int soLuong;
     protected double donGia;
-    protected double VAT;
 
-    public ProductDTO(String maHang, String tenHang, int soLuongTon, double donGia, double vAT) {
+    public HangHoaDTO(String maHang, String tenHang, int soLuong, double donGia) {
         this.maHang = maHang;
         this.tenHang = tenHang;
-        this.soLuongTon = soLuongTon;
+        this.soLuong = soLuong;
         this.donGia = donGia;
-        VAT = vAT;
     }
+
+    public HangHoaDTO(){}
 
     public String getMaHang() {
         return maHang;
@@ -23,16 +27,12 @@ public class ProductDTO {
         return tenHang;
     }
 
-    public int getSoLuongTon() {
-        return soLuongTon;
+    public int getSoLuong() {
+        return soLuong;
     }
 
     public double getDonGia() {
         return donGia;
-    }
-
-    public double getVAT() {
-        return VAT;
     }
 
 }
