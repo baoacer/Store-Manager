@@ -1,4 +1,5 @@
 package com.example.ui;
+<<<<<<< HEAD
 import com.example.dtos.ResponseDTO;
 import com.example.dtos.getProductListDTOs.HangHoaOutputDTO;
 import com.example.usecase.ResponseData;
@@ -74,5 +75,21 @@ public class Presenter implements OutputBoundary{
 
     public ResponseData getResponse() {
         return response;
+=======
+
+import com.example.usecase.OutputBoundary;
+import com.example.usecase.ResponseData;
+
+public class Presenter implements OutputBoundary {
+    private ResponseData responseData = null;
+
+    @Override
+    public void exportResult(ResponseData responseData) {
+        this.responseData = responseData;
+    }
+
+    public ResponseData getResponseData() {
+        return responseData;
+>>>>>>> 5ad7ea67ce9d350718af88c48a0fd930d97851f3
     }
 }

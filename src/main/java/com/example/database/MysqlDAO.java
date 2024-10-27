@@ -14,7 +14,11 @@ import com.example.entity.HangThucPham;
 import com.example.usecase.DatabaseBoundary;
 import com.example.usecase.RequestData;
 
-public class MysqlDAO implements DatabaseBoundary {
+import java.sql.*;
+
+public class MySqlDAO implements DatabaseBoundary {
+    private Connection connection = null;
+
 
     public MysqlDAO() {
     }
@@ -199,7 +203,6 @@ public class MysqlDAO implements DatabaseBoundary {
         }
     }
 
-
     @Override
     public int getTotalQuantityDienMay() throws SQLException {
         String query = "SELECT SUM(hh.soLuongTon) " +
@@ -228,7 +231,8 @@ public class MysqlDAO implements DatabaseBoundary {
 
 
     private int getTotalQuantity(String query, String errorMessage) throws SQLException {
-        Connection connection = MysqlConnection.getConnection();
+
+        connection = MysqlConnection.getConnection();
         Statement statement = null;
         ResultSet resultSet = null;
         int totalQuantity = 0;
@@ -350,7 +354,6 @@ public class MysqlDAO implements DatabaseBoundary {
             connection.setAutoCommit(false);
 
             try (PreparedStatement preparedStatementHangSanhSu = connection.prepareStatement(queryHangSanhSu)) {
-
 
                 preparedStatementHangSanhSu.setString(1, hangSanhSu.getNhaSanXuat());
                 preparedStatementHangSanhSu.setDate(2, java.sql.Date.valueOf(hangSanhSu.getNgayNhapKho()));
