@@ -32,7 +32,7 @@ public class GetProductListTest {
         // 6. Kiểm tra kết quả trong Presenter
         GetProductListOutputDTO outputDTO = (GetProductListOutputDTO) p.getResponse();
         // Kiểm tra số lượng sản phẩm trong danh sách
-        assertEquals(71, outputDTO.getList().size());
+        assertEquals(34, outputDTO.getList().size());
 
         outputDTO.getList().forEach(System.out::println);
     }

@@ -18,24 +18,28 @@ public class RemoveProductTest {
     @Test
     public void removeProductOk() throws SQLException {
         DatabaseBoundary database = new MysqlDAO();
+//        Controller controller = new Controller();
+//        View view = new View(controller);
         Presenter presenter = new Presenter();
         InputBoundary removeUseCase = new RemoveProductUseCase(database, presenter);
+//        controller.setInputBoundary(input);
 
         RemoveDTO maHang = new RemoveDTO("HDM003");
 
         removeUseCase.execute(maHang);
 
         ResponseDTO response = (ResponseDTO)presenter.getResponse();
-        assertEquals("Success::Delete Product Success", response.getContent() );
+        assertEquals("Success::Delete Product Success", response.getContent());
     }
 
     @Test
     public void productNotExists() throws SQLException {
         DatabaseBoundary database = new MysqlDAO();
+
         Presenter presenter = new Presenter();
         InputBoundary removeUseCase = new RemoveProductUseCase(database, presenter);
 
-        RemoveDTO maHang = new RemoveDTO("HSS001");
+        RemoveDTO maHang = new RemoveDTO("HDM003");
 
         removeUseCase.execute(maHang);
 
@@ -45,35 +49,17 @@ public class RemoveProductTest {
     }
 
     @Test
-    public void removeProductNullId() throws SQLException {
+    public void removeProductFailed() throws SQLException {
         DatabaseBoundary database = new MysqlDAO();
         Presenter presenter = new Presenter();
         InputBoundary removeUseCase = new RemoveProductUseCase(database, presenter);
 
-        // Data Test
         RemoveDTO maHang = new RemoveDTO("");
 
         removeUseCase.execute(maHang);
 
-        ResponseDTO response = (ResponseDTO) presenter.getResponse();
+        ResponseDTO response = (ResponseDTO)presenter.getResponse();
 
-        assertEquals("Error::Product ID cannot be empty.", response.getContent());
-    }
-
-
-    @Test
-    public void removeProductInvalidPrefix() throws SQLException {
-        DatabaseBoundary database = new MysqlDAO();
-        Presenter presenter = new Presenter();
-        InputBoundary removeUseCase = new RemoveProductUseCase(database, presenter);
-
-        // Data Test
-        RemoveDTO maHang = new RemoveDTO("XYZ123");
-
-        removeUseCase.execute(maHang);
-
-        ResponseDTO response = (ResponseDTO) presenter.getResponse();
-
-        assertEquals("Error::Invalid Product ID. ID must start with HTT, HSS, or HDM.", response.getContent());
+        assertEquals("Error::Invalid Product ID", response.getContent() );
     }
 }

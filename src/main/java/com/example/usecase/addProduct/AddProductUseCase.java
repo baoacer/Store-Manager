@@ -32,102 +32,128 @@ public class AddProductUseCase implements InputBoundary {
         ResponseDTO addResponse = new ResponseDTO();
         HangHoaDTO dto = (HangHoaDTO) requestData;
 
-        if(validate(dto)){
-            HangHoa hangHoa = null;
-
-            if(requestData instanceof ThucPhamDTO){
-                hangHoa = new HangThucPham(
-                        dto.getMaHang(),
-                        dto.getTenHang(),
-                        dto.getSoLuong(),
-                        dto.getDonGia(),
-                        ((ThucPhamDTO) dto).getNgaySanXuat(),
-                        ((ThucPhamDTO) dto).getNgayHetHan(),
-                        ((ThucPhamDTO) dto).getNhaCungCap()
-                );
-            } else if (requestData instanceof DienMayDTO) {
-                hangHoa = new HangDienMay(
-                        dto.getMaHang(),
-                        dto.getTenHang(),
-                        dto.getSoLuong(),
-                        dto.getDonGia(),
-                        ((DienMayDTO)dto).getCongSuat(),
-                        ((DienMayDTO)dto).getThoiGianBaoHanh());
-            }else{
-                hangHoa = new HangSanhSu(
-                        dto.getMaHang(),
-                        dto.getTenHang(),
-                        dto.getSoLuong(),
-                        dto.getDonGia(),
-                        ((SanhSuDTO)dto).getNgayNhapKho(),
-                        ((SanhSuDTO)dto).getNhaSanXuat());
-            }
-
-            if (hangHoa != null) {
-                boolean isSave = databaseBoundary.saveProduct(hangHoa);
-                if (isSave) {
-                    addResponse.setContent("Success::Thêm sản phẩm thành công");
-                    outputBoundary.exportResult(addResponse);
-//                    outputBoundary.addProductPresenter(addResponse);
-                }
-            }
-        }else {
-            addResponse.setContent("Error::Kiểm tra lại dữ liệu");
+        // Kiểm tra dữ liệu
+        String validationError = validate(dto);
+        if (validationError != null) {
+            // Nếu có lỗi, trả về ngay thông báo lỗi đó
+            addResponse.setContent("Error::" + validationError);
             outputBoundary.exportResult(addResponse);
-//            outputBoundary.addProductPresenter(addResponse);
+            return;
         }
+
+        // Nếu không có lỗi, tiếp tục xử lý tạo đối tượng HangHoa và lưu vào DB
+        HangHoa hangHoa = null;
+
+        if (requestData instanceof ThucPhamDTO) {
+            hangHoa = new HangThucPham(
+                    dto.getMaHang(),
+                    dto.getTenHang(),
+                    dto.getSoLuong(),
+                    dto.getDonGia(),
+                    ((ThucPhamDTO) dto).getNgaySanXuat(),
+                    ((ThucPhamDTO) dto).getNgayHetHan(),
+                    ((ThucPhamDTO) dto).getNhaCungCap()
+            );
+        } else if (requestData instanceof DienMayDTO) {
+            hangHoa = new HangDienMay(
+                    dto.getMaHang(),
+                    dto.getTenHang(),
+                    dto.getSoLuong(),
+                    dto.getDonGia(),
+                    ((DienMayDTO) dto).getCongSuat(),
+                    ((DienMayDTO) dto).getThoiGianBaoHanh()
+            );
+        } else if (requestData instanceof SanhSuDTO) {
+            hangHoa = new HangSanhSu(
+                    dto.getMaHang(),
+                    dto.getTenHang(),
+                    dto.getSoLuong(),
+                    dto.getDonGia(),
+                    ((SanhSuDTO) dto).getNgayNhapKho(),
+                    ((SanhSuDTO) dto).getNhaSanXuat()
+            );
+        }
+
+        // Kiểm tra nếu hangHoa được tạo thành công
+        if (hangHoa != null) {
+            boolean isSave = databaseBoundary.saveProduct(hangHoa);
+            if (isSave) {
+                addResponse.setContent("Success::Thêm sản phẩm thành công");
+            } else {
+                addResponse.setContent("Error::Lưu sản phẩm thất bại");
+            }
+        } else {
+            addResponse.setContent("Error::Không thể tạo đối tượng sản phẩm.");
+        }
+
+        // Xuất kết quả
+        outputBoundary.exportResult(addResponse);
     }
 
 
-
-    public boolean validate(HangHoaDTO data) {
+    public String validate(HangHoaDTO data) {
         // Kiểm tra các thuộc tính chung
         if (data.getMaHang() == null || data.getMaHang().isEmpty()) {
-            return false;
+            return "Mã hàng không được để trống.";
         }
         if (data.getTenHang() == null || data.getTenHang().isEmpty()) {
-            return false;
+            return "Tên hàng không được để trống.";
         }
         if (data.getSoLuong() < 0) {
-            return false;
+            return "Số lượng không được âm.";
         }
         if (data.getDonGia() <= 0) {
-            return false;
+            return "Đơn giá phải lớn hơn 0.";
         }
 
         // Kiểm tra thuộc tính đặc thù dựa vào loại sản phẩm
-        if(data instanceof ThucPhamDTO){
-            ThucPhamDTO thucPham = (ThucPhamDTO)data;
+        if (data instanceof ThucPhamDTO) {
+            ThucPhamDTO thucPham = (ThucPhamDTO) data;
             if (thucPham.getNgaySanXuat() == null) {
-                return false;
+                return "Ngày sản xuất không được để trống.";
             }
             if (thucPham.getNgayHetHan() == null) {
-                return false;
+                return "Ngày hết hạn không được để trống.";
             }
             if (!thucPham.getNgayHetHan().isAfter(thucPham.getNgaySanXuat())) {
-                return false;
+                return "Ngày hết hạn phải sau ngày sản xuất.";
             }
             if (thucPham.getNhaCungCap() == null || thucPham.getNhaCungCap().isEmpty()) {
-                return false;
+                return "Nhà cung cấp không được để trống.";
             }
         } else if (data instanceof DienMayDTO) {
-            DienMayDTO dienMay = (DienMayDTO)data;
+            DienMayDTO dienMay = (DienMayDTO) data;
             if (dienMay.getThoiGianBaoHanh() < 0) {
-                return false;
+                return "Thời gian bảo hành không được âm.";
             }
             if (dienMay.getCongSuat() <= 0) {
-                return false;
+                return "Công suất phải lớn hơn 0.";
             }
-        }else{
+        } else if (data instanceof SanhSuDTO) {
             SanhSuDTO sanhSu = (SanhSuDTO) data;
             if (sanhSu.getNhaSanXuat() == null || sanhSu.getNhaSanXuat().isEmpty()) {
-                return false;
+                return "Nhà sản xuất không được để trống.";
             }
             if (sanhSu.getNgayNhapKho() == null) {
-                return false;
+                return "Ngày nhập kho không được để trống.";
             }
         }
+
         // Nếu tất cả kiểm tra đều hợp lệ
-        return true;
+        return null;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

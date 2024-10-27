@@ -51,7 +51,7 @@ public class UpdateProductUseCase implements InputBoundary {
             HangSanhSu hangSanhSu = new HangSanhSu(sanhSuDTO.getMaHang(), sanhSuDTO.getTenHang(), sanhSuDTO.getSoLuong(), sanhSuDTO.getDonGia(), sanhSuDTO.getNgayNhapKho(),sanhSuDTO.getNhaSanXuat());
            String message = databaseBoundary.updateProductSanhSu(hangSanhSu);
             ResponseData responseData = new UpdateSanhSuOutputDTO(message);
-            outputBoundary.exportResult(responseData);
+            outputBoundary.exportResult(responseData);  
         } else if (requestData instanceof ThucPhamDTO) {
             ThucPhamDTO thucPhamDTO = (ThucPhamDTO)requestData;
 

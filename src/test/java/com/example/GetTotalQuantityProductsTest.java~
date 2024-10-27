@@ -24,9 +24,17 @@ public class GetTotalQuantityProductsTest {
         DatabaseBoundary databaseBoundary = new MysqlDAO();
         Presenter presenter = new Presenter();
         TotalQuantityUseCase totalQuantityUseCase = new TotalQuantityUseCase(databaseBoundary, presenter);
-        RequestData requestData = new DienMayDTO();
+        RequestData requestData = new DienMayDTO(
+                null,
+                null,
+                100,
+                100000,
+                8,
+                30);
         totalQuantityUseCase.execute(requestData);
         TotalQuantityDienMayOutputDTO totalQuantityDienMayOutputDTO = (TotalQuantityDienMayOutputDTO) presenter.getResponse();
         assertEquals(568, totalQuantityDienMayOutputDTO.getTotalQuantity());
     }
+
+
 }

@@ -34,7 +34,7 @@ public class Presenter implements OutputBoundary{
         for(HangHoaOutputDTO hangHoaOutputDTO: listHangHoaOutputDTO){
             ViewModel viewModel = new ViewModel
                     (hangHoaOutputDTO.getMaHang(),hangHoaOutputDTO.getSoLuongTon(),hangHoaOutputDTO.getTenHang(), hangHoaOutputDTO.getDonGia());
-            listViewModel.add(viewModel);
+            listViewModel.add(viewModel);   
         }
     }
    public List<GetProductListOutputDTO> getProductListOutputDTOS(){

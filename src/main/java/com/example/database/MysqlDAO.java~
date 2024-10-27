@@ -195,7 +195,7 @@ public class MysqlDAO implements DatabaseBoundary {
             }
 
         } catch (SQLException e) {
-           return false;
+            throw new SQLException("Failed to remove product", e);
         }
     }
 
