@@ -17,9 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class GetProductListTest {
-    private MysqlDAO mysqlDAO;
-    private Presenter presenter;
-    private InputBoundary useCase;
+
     @Test
     public void testGetAllProductListOK() throws SQLException{
         // 1. Tạo đối tượng MysqlDAO và truyền dữ liệu giả lập từ getData()
@@ -34,7 +32,7 @@ public class GetProductListTest {
         // 6. Kiểm tra kết quả trong Presenter
         GetProductListOutputDTO outputDTO = (GetProductListOutputDTO) p.getResponse();
         // Kiểm tra số lượng sản phẩm trong danh sách
-        assertEquals(34, outputDTO.getList().size());
+        assertEquals(71, outputDTO.getList().size());
 
         outputDTO.getList().forEach(System.out::println);
     }

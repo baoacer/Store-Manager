@@ -14,7 +14,11 @@ import com.example.entity.HangThucPham;
 import com.example.usecase.DatabaseBoundary;
 import com.example.usecase.RequestData;
 
-public class MysqlDAO implements DatabaseBoundary {
+import java.sql.*;
+
+public class MySqlDAO implements DatabaseBoundary {
+    private Connection connection = null;
+
 
     public MysqlDAO() {
     }
@@ -135,7 +139,6 @@ public class MysqlDAO implements DatabaseBoundary {
                     stmtDienMay.setDouble(3, hd.getCongSuat());
                     stmtDienMay.executeUpdate();
                 }
-
             } else if (hangHoa instanceof HangSanhSu) {
                 HangSanhSu hs = (HangSanhSu) hangHoa;
                 String sqlSanhSu = "INSERT INTO hangsanhsu (maHang, nhaSanXuat, ngayNhapKho) " +
@@ -152,7 +155,7 @@ public class MysqlDAO implements DatabaseBoundary {
             return true;
 
         } catch (SQLException e) {
-            throw new SQLException("Failed to save product", e);
+           return false;
         }
     }
 
@@ -196,12 +199,9 @@ public class MysqlDAO implements DatabaseBoundary {
             }
 
         } catch (SQLException e) {
-            throw new SQLException("Failed to remove product", e);
+           return false;
         }
     }
-
-
-
 
     @Override
     public int getTotalQuantityDienMay() throws SQLException {
@@ -231,7 +231,8 @@ public class MysqlDAO implements DatabaseBoundary {
 
 
     private int getTotalQuantity(String query, String errorMessage) throws SQLException {
-        Connection connection = MysqlConnection.getConnection();
+
+        connection = MysqlConnection.getConnection();
         Statement statement = null;
         ResultSet resultSet = null;
         int totalQuantity = 0;
@@ -261,11 +262,11 @@ public class MysqlDAO implements DatabaseBoundary {
         String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
 
         try {
-            // Start transaction
+
             Connection connection = MysqlConnection.getConnection();
 
 
-            // Update hangdienmay
+
             try (PreparedStatement preparedStatementHangDienMay = connection.prepareStatement(queryHangDienMay)) {
 
 
@@ -276,7 +277,6 @@ public class MysqlDAO implements DatabaseBoundary {
                 preparedStatementHangDienMay.executeUpdate();
             }
 
-            // Update hanghoa
             try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
 
                 preparedStatementHangHoa.setString(1, hangDienMay.getTenHang());
@@ -295,11 +295,9 @@ public class MysqlDAO implements DatabaseBoundary {
             } catch (SQLException rollbackException) {
                 System.err.println("loi rollback: " + rollbackException.getMessage());
             }
-
-            return "Lỗi khi cập nhật điện máy";
+            return "Loi khi cap nhat dien may";
         }
     }
-
 
 
     @Override
@@ -309,11 +307,7 @@ public class MysqlDAO implements DatabaseBoundary {
 
         try {
             Connection connection = MysqlConnection.getConnection();
-
-
             try (PreparedStatement preparedStatementHangThucPham = connection.prepareStatement(queryHangThucPham)) {
-
-
                 preparedStatementHangThucPham.setDate(1, java.sql.Date.valueOf(hangThucPham.getNgaySanXuat()));
                 preparedStatementHangThucPham.setDate(2, java.sql.Date.valueOf(hangThucPham.getNgayHetHan()));
                 preparedStatementHangThucPham.setString(3, hangThucPham.getNhaCungCap());
@@ -326,6 +320,7 @@ public class MysqlDAO implements DatabaseBoundary {
             try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
 
 
+
                 preparedStatementHangHoa.setString(1, hangThucPham.getTenHang());
                 preparedStatementHangHoa.setInt(2, hangThucPham.getSoLuongTon());
                 preparedStatementHangHoa.setDouble(3, hangThucPham.getDonGia());
@@ -334,7 +329,7 @@ public class MysqlDAO implements DatabaseBoundary {
                 preparedStatementHangHoa.executeUpdate();
             }
 
-            return "Thuc Pham cap nhat thanh cong!";
+            return "Thuc pham cap nhat thanh cong!";
 
         } catch (SQLException e) {
 
@@ -344,11 +339,9 @@ public class MysqlDAO implements DatabaseBoundary {
                 System.err.println("loi rollback: " + rollbackException.getMessage());
             }
 
-           return "Lỗi cập nhật dữ liệu thực phẩm";
+           return "Loi cap nhat du lieu";
         }
     }
-
-
 
 
     @Override
@@ -357,12 +350,10 @@ public class MysqlDAO implements DatabaseBoundary {
         String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
 
         try {
-
             Connection connection = MysqlConnection.getConnection();
             connection.setAutoCommit(false);
 
             try (PreparedStatement preparedStatementHangSanhSu = connection.prepareStatement(queryHangSanhSu)) {
-
 
                 preparedStatementHangSanhSu.setString(1, hangSanhSu.getNhaSanXuat());
                 preparedStatementHangSanhSu.setDate(2, java.sql.Date.valueOf(hangSanhSu.getNgayNhapKho()));
@@ -383,7 +374,7 @@ public class MysqlDAO implements DatabaseBoundary {
             }
 
             connection.commit();
-            return "Sanh Su cap nhat thanh cong!";
+            return "Sanh su cap nhat thanh cong!";
 
         } catch (SQLException e) {
             try (Connection connection = MysqlConnection.getConnection()) {
@@ -392,7 +383,7 @@ public class MysqlDAO implements DatabaseBoundary {
                 System.err.println("loi rollback: " + rollbackException.getMessage());
             }
 
-            return "Lỗi cập nhật dữ liệu sành sứ";
+            return "loi cap nhat du lieu sanh su";
         }
     }
 }

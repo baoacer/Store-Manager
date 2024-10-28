@@ -35,7 +35,7 @@ public class Presenter implements OutputBoundary{
         for(HangHoaOutputDTO hangHoaOutputDTO: listHangHoaOutputDTO){
             ViewModel viewModel = new ViewModel
                     (hangHoaOutputDTO.getMaHang(),hangHoaOutputDTO.getSoLuongTon(),hangHoaOutputDTO.getTenHang(), hangHoaOutputDTO.getDonGia());
-            listViewModel.add(viewModel);
+            listViewModel.add(viewModel);   
         }
     }
    public List<GetProductListOutputDTO> getProductListOutputDTOS(){
@@ -86,10 +86,6 @@ public class Presenter implements OutputBoundary {
     @Override
     public void exportResult(ResponseData responseData) {
         this.responseData = responseData;
-    }
-
-    public ResponseData getResponseData() {
-        return responseData;
 >>>>>>> 5ad7ea67ce9d350718af88c48a0fd930d97851f3
     }
 }

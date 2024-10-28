@@ -22,29 +22,22 @@ public class RemoveProductUseCase implements InputBoundary {
     public void execute(RequestData requestData) throws SQLException {
         RemoveDTO dto = (RemoveDTO) requestData;
         ResponseDTO removeResponse = new ResponseDTO();
-
-        if (dto.getMaHang() == null || dto.getMaHang().isEmpty()) {
-            removeResponse.setContent("Error::Product ID cannot be empty.");
-        } else if (!validate(dto.getMaHang())) {
-            removeResponse.setContent("Error::Invalid Product ID. ID must start with HTT, HSS, or HDM.");
-        } else {
+        if(validate(dto.getMaHang())){
             boolean isRemove = databaseBoundary.removeProduct(dto.getMaHang());
-            if (isRemove) {
+            if(isRemove){
                 removeResponse.setContent("Success::Delete Product Success");
-            } else {
+            }else{
                 removeResponse.setContent("Error::Product Not Exists");
             }
+        }else{
+            removeResponse.setContent("Error::Invalid Product ID");
         }
-
         outputBoundary.exportResult(removeResponse);
+//        outputBoundary.removeProductPresenter(removeResponse);
     }
 
-
-    public boolean validate(String maHang) {
-        if (maHang == null || maHang.isEmpty()) {
-            return false;
-        }
-        if (!maHang.startsWith("HTT") && !maHang.startsWith("HSS") && !maHang.startsWith("HDM")) {
+    public boolean validate(String maHang){
+        if(maHang == null || maHang.equals("")){
             return false;
         }
         return true;

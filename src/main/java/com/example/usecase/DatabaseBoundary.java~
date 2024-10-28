@@ -1,0 +1,24 @@
+package com.example.usecase;
+
+import java.sql.SQLException;
+
+import com.example.entity.HangDienMay;
+import com.example.entity.HangSanhSu;
+import com.example.entity.HangThucPham;
+import com.example.usecase.RequestData;
+
+public interface DatabaseBoundary {
+
+
+    String updateProductDienMay(RequestData requestData) throws SQLException;
+
+    String updateProductThucPham(RequestData requestData) throws SQLException;
+
+    String updateProductSanhSu(RequestData requestData) throws SQLException;
+
+    int getTotalQuantityDienMay() throws SQLException;
+
+    int getTotalQuantitySanhSu() throws SQLException;
+
+    int getTotalQuantityThucPham() throws SQLException;
+}

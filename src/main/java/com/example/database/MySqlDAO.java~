@@ -1,0 +1,215 @@
+package com.example.database;
+
+import com.example.dtos.DienMayDTO;
+import com.example.dtos.SanhSuDTO;
+import com.example.dtos.ThucPhamDTO;
+import com.example.usecase.*;
+
+import java.sql.*;
+
+public class MySqlDAO implements DatabaseBoundary {
+    private Connection connection = null;
+
+
+    @Override
+    public int getTotalQuantityDienMay() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangdienmay hdm ON hh.maHang = hdm.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong dien may");
+    }
+
+
+    @Override
+    public int getTotalQuantitySanhSu() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangsanhsu hss ON hh.maHang = hss.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong sanh su");
+    }
+
+
+    @Override
+    public int getTotalQuantityThucPham() throws SQLException {
+        String query = "SELECT SUM(hh.soLuongTon) " +
+                "FROM hanghoa hh " +
+                "INNER JOIN hangthucpham htp ON hh.maHang = htp.maHang";
+        return getTotalQuantity(query, "Khong the lay so luong thuc pham");
+    }
+
+
+    private int getTotalQuantity(String query, String errorMessage) throws SQLException {
+        connection = MysqlConnection.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        int totalQuantity = 0;
+
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                totalQuantity = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(errorMessage + ": " + e.getMessage());
+        } finally {
+            if (resultSet != null)
+                resultSet.close();
+            if (statement != null)
+                statement.close();
+        }
+
+        return totalQuantity;
+    }
+
+
+    @Override
+    public String updateProductDienMay(RequestData requestData) throws SQLException {
+        String queryHangDienMay = "UPDATE hangdienmay SET thoiGianBaoHanh = ?, congSuat = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+            // Start transaction
+            Connection connection = MysqlConnection.getConnection();
+
+
+            // Update hangdienmay
+            try (PreparedStatement preparedStatementHangDienMay = connection.prepareStatement(queryHangDienMay)) {
+                DienMayDTO hangDienMay = (DienMayDTO) requestData;
+
+                preparedStatementHangDienMay.setInt(1, hangDienMay.getThoiGianBaoHanh());
+                preparedStatementHangDienMay.setDouble(2, hangDienMay.getCongSuat());
+                preparedStatementHangDienMay.setString(3, hangDienMay.getMaHang());
+
+                preparedStatementHangDienMay.executeUpdate();
+            }
+
+            // Update hanghoa
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+                DienMayDTO hangDienMay = (DienMayDTO) requestData;
+
+                preparedStatementHangHoa.setString(1, hangDienMay.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangDienMay.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangDienMay.getDonGia());
+                preparedStatementHangHoa.setString(4, hangDienMay.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+            return "Dien may cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+            // Rollback transaction if any error occurs
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+            System.err.println("loi dien may: " + e.getMessage());
+            throw e;
+        }
+    }
+
+
+
+    @Override
+    public String updateProductThucPham(RequestData requestData) throws SQLException {
+        String queryHangThucPham = "UPDATE hangthucpham SET ngaySanXuat = ?, ngayHetHan = ?, nhaCungCap = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+            Connection connection = MysqlConnection.getConnection();
+
+
+            try (PreparedStatement preparedStatementHangThucPham = connection.prepareStatement(queryHangThucPham)) {
+                ThucPhamDTO hangThucPham = (ThucPhamDTO) requestData;
+
+                preparedStatementHangThucPham.setDate(1, java.sql.Date.valueOf(hangThucPham.getNgaySanXuat()));
+                preparedStatementHangThucPham.setDate(2, java.sql.Date.valueOf(hangThucPham.getNgayHetHan()));
+                preparedStatementHangThucPham.setString(3, hangThucPham.getNhaCungCap());
+                preparedStatementHangThucPham.setString(4, hangThucPham.getMaHang());
+
+                preparedStatementHangThucPham.executeUpdate();
+            }
+
+
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+                ThucPhamDTO hangThucPham = (ThucPhamDTO) requestData;
+
+                preparedStatementHangHoa.setString(1, hangThucPham.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangThucPham.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangThucPham.getDonGia());
+                preparedStatementHangHoa.setString(4, hangThucPham.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+
+            return "Thuc Pham cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+            System.err.println("loi thuc pham: " + e.getMessage());
+            throw e;
+        }
+    }
+
+
+
+
+    @Override
+    public String updateProductSanhSu(RequestData requestData) throws SQLException {
+        String queryHangSanhSu = "UPDATE hangsangsu SET nhaSanXuat = ?, ngayNhapKho = ? WHERE maHang = ?";
+        String queryHangHoa = "UPDATE hanghoa SET tenHang = ?, soLuongTon = ?, donGia = ? WHERE maHang = ?";
+
+        try {
+            // Start transaction
+            Connection connection = MysqlConnection.getConnection();
+            connection.setAutoCommit(false); // Disable auto-commit for transaction
+
+            // Update hangsangsu
+            try (PreparedStatement preparedStatementHangSanhSu = connection.prepareStatement(queryHangSanhSu)) {
+                SanhSuDTO hangSanhSu = (SanhSuDTO) requestData;
+
+                preparedStatementHangSanhSu.setString(1, hangSanhSu.getNhaSanXuat());
+                preparedStatementHangSanhSu.setDate(2, java.sql.Date.valueOf(hangSanhSu.getNgayNhapKho()));
+                preparedStatementHangSanhSu.setString(3, hangSanhSu.getMaHang());
+
+                preparedStatementHangSanhSu.executeUpdate();
+            }
+
+            // Update hanghoa
+            try (PreparedStatement preparedStatementHangHoa = connection.prepareStatement(queryHangHoa)) {
+                SanhSuDTO hangSanhSu = (SanhSuDTO) requestData;
+
+                preparedStatementHangHoa.setString(1, hangSanhSu.getTenHang());
+                preparedStatementHangHoa.setInt(2, hangSanhSu.getSoLuongTon());
+                preparedStatementHangHoa.setDouble(3, hangSanhSu.getDonGia());
+                preparedStatementHangHoa.setString(4, hangSanhSu.getMaHang());
+
+                preparedStatementHangHoa.executeUpdate();
+            }
+
+            connection.commit(); // Commit the transaction
+            return "Sanh Su cap nhat thanh cong!";
+
+        } catch (SQLException e) {
+            // Rollback transaction if any error occurs
+            try (Connection connection = MysqlConnection.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                System.err.println("loi rollback: " + rollbackException.getMessage());
+            }
+
+            System.err.println("loi sanh su: " + e.getMessage());
+            throw e;
+        }
+    }
+}

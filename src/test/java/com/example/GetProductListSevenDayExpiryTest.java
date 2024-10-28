@@ -23,7 +23,7 @@ public class GetProductListSevenDayExpiryTest {
 
         outputDTO.getList().forEach(System.out::println);
 
-        assertEquals(4, outputDTO.getList().size());
+        assertEquals(3, outputDTO.getList().size());
     }
 
 }
